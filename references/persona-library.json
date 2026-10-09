@@ -1,0 +1,428 @@
+{
+  "_comment": "麦当劳人格库 · 22 格机器可读定义。conditions: feature/op/threshold/weight/dir(up=越大越好,down=越小越好)/group(同组OR,跨组AND)/gate(true=不达标即出局且不参与计分)。reasons: 模板 + require(键存在且>=min才渲染)。",
+  "families": ["time", "taste", "behave", "asset"],
+  "family_order": {"time": 0, "taste": 1, "behave": 2, "asset": 3},
+  "min_score": 25,
+  "sub_min_score": 40,
+  "sub_max": 2,
+  "personas": [
+    {
+      "code": "M01", "name": "麦满分信徒", "emoji": "🌅", "rarity": "R", "family": "time",
+      "animal": "小鸡",
+      "tagline": "别人被闹钟叫醒，他被板烧香醒。早上不吃饭这件事，在他这里不成立。",
+      "quote": "早八不苦，麦满分是甜的",
+      "color1": "#FF8A00", "color2": "#4EC3F5",
+      "conditions": [
+        {"feature": "breakfast_rate", "op": ">=", "threshold": 0.4, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "breakfast_items", "op": ">=", "threshold": 3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "breakfast_orders", "min": 1}, {"k": "earliest_time"}], "tpl": "{order_count} 单里有 {breakfast_orders} 单在早上 10:30 前下单，最早的一单落在 {earliest_time}"},
+        {"require": [{"k": "top1_name"}, {"k": "top1_count", "min": 2}], "tpl": "{top1_name}点了 {top1_count} 次，是全部订单里出现最多的单品"},
+        {"require": [{"k": "breakfast_items", "min": 2}], "tpl": "豆浆、薯饼、油条这类早餐件数合计 {breakfast_items} 件，你的早餐配置比你的周报还规律"},
+        {"require": [{"k": "breakfast_rate_pct", "min": 1}], "tpl": "早餐率 {breakfast_rate_pct}%，麦当劳在你这里是食堂，不是快餐店"}
+      ],
+      "sub_desc": "早餐率 {breakfast_rate_pct}%",
+      "counter": "M04"
+    },
+    {
+      "code": "M02", "name": "正午踩点侠", "emoji": "🕛", "rarity": "R", "family": "time",
+      "animal": "兔子",
+      "tagline": "12:00 的取餐码，从不偏差一分钟。",
+      "quote": "12:00 是我的生物钟，误差不超过一首歌",
+      "color1": "#FFD400", "color2": "#FF3D8B",
+      "conditions": [
+        {"feature": "lunch_rate", "op": ">=", "threshold": 0.5, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "order_count", "op": ">=", "threshold": 4, "weight": 0, "dir": "up", "gate": true}
+      ],
+      "reasons": [
+        {"require": [{"k": "lunch_orders", "min": 1}], "tpl": "{order_count} 单里有 {lunch_orders} 单落在 11:30-13:00 之间，午市踩点率 {lunch_rate_pct}%"},
+        {"require": [{"k": "most_common_hour"}], "tpl": "你最常下单的时段是 {most_common_hour}，前后误差小得像设了闹钟"},
+        {"require": [{"k": "avg_gap_days"}], "tpl": "平均 {avg_gap_days} 天来一次，节奏稳定得可怕"},
+        {"require": [{"k": "top3_desc"}], "tpl": "常点的三样是 {top3_desc}，闭着眼都能报出取餐码"}
+      ],
+      "sub_desc": "午市踩点率 {lunch_rate_pct}%",
+      "counter": "M05"
+    },
+    {
+      "code": "M03", "name": "下午茶主理人", "emoji": "🍰", "rarity": "SR", "family": "time",
+      "animal": "企鹅",
+      "tagline": "三点半不来一份，下午等于白过。",
+      "quote": "下午三点半的甜，是打工人的续命符",
+      "color1": "#FFE9A8", "color2": "#3FD0B6",
+      "conditions": [
+        {"feature": "teatime_rate", "op": ">=", "threshold": 0.3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "teatime_orders", "min": 1}], "tpl": "{order_count} 单里有 {teatime_orders} 单发生在下午 14:00-17:00，下午茶率 {teatime_rate_pct}%"},
+        {"require": [{"k": "dessert_items", "min": 1}], "tpl": "甜品累计 {dessert_items} 件，正餐是顺便，下午茶才是正事"},
+        {"require": [{"k": "most_common_hour"}], "tpl": "你最常出现的时段是 {most_common_hour}，正好是下午最容易犯困的时候"},
+        {"require": [{"k": "avg_ticket"}], "tpl": "平均一单 {avg_ticket} 元，不为吃饱，只为那一口"}
+      ],
+      "sub_desc": "下午茶率 {teatime_rate_pct}%",
+      "counter": "M04"
+    },
+    {
+      "code": "M04", "name": "深夜食堂主理人", "emoji": "🌙", "rarity": "SSR", "family": "time",
+      "animal": "考拉",
+      "tagline": "凌晨的金色拱门，比家门还熟。",
+      "quote": "白天的麦当劳是快餐，深夜的麦当劳是避难所",
+      "color1": "#3B4CCA", "color2": "#F5FF3D",
+      "conditions": [
+        {"feature": "midnight_rate", "op": ">=", "threshold": 0.3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "midnight_orders", "min": 1}], "tpl": "{order_count} 单里有 {midnight_orders} 单在 21:00 之后下单，夜宵率 {midnight_rate_pct}%"},
+        {"require": [{"k": "latest_time"}], "tpl": "最晚的一单落在 {latest_time}，这个点还在吃麦的人都有故事"},
+        {"require": [{"k": "weekend_orders", "min": 1}], "tpl": "其中 {weekend_orders} 单发生在周末，夜晚是你的主场"},
+        {"require": [{"k": "midnight_rate_pct", "min": 1}], "tpl": "夜宵率 {midnight_rate_pct}%，霓虹灯下的金色拱门比家里的灯还熟"}
+      ],
+      "sub_desc": "夜宵率 {midnight_rate_pct}%",
+      "counter": "M01"
+    },
+    {
+      "code": "M05", "name": "失踪人口", "emoji": "🫥", "rarity": "SR", "family": "time",
+      "animal": "变色龙",
+      "tagline": "上一次出现在 X 天前，粉红姐姐在等你。",
+      "quote": "不是不爱了，只是最近有点忙——麦当劳信你这句",
+      "color1": "#A9B8CC", "color2": "#FF6B2B",
+      "conditions": [
+        {"feature": "days_since_last", "op": ">=", "threshold": 60, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "order_count", "op": ">=", "threshold": 3, "weight": 0, "dir": "up", "gate": true}
+      ],
+      "reasons": [
+        {"require": [{"k": "days_since_last", "min": 1}], "tpl": "距离上一单已经过去 {days_since_last} 天，粉红姐姐可能已经忘了你的脸"},
+        {"require": [{"k": "max_gap_days", "min": 30}], "tpl": "最长的一次断档是 {max_gap_days} 天，你说消失就真的消失"},
+        {"require": [{"k": "last_date"}], "tpl": "最后一次出现是 {last_date}，之后再无音讯"},
+        {"require": [{"k": "span_days", "min": 1}], "tpl": "{span_days} 天里总共只下了 {order_count} 单，来一次算一次惊喜"}
+      ],
+      "sub_desc": "已 {days_since_last} 天没出现",
+      "counter": "M16"
+    },
+    {
+      "code": "M06", "name": "冰咖续命徒", "emoji": "☕", "rarity": "R", "family": "taste",
+      "animal": "树懒",
+      "tagline": "血管里流的不是血，是鲜萃冰咖。",
+      "quote": "咖啡因是唯一的生产力，冰的才有效",
+      "color1": "#6F4E37", "color2": "#7FE7FF",
+      "conditions": [
+        {"feature": "coffee_rate", "op": ">=", "threshold": 0.3, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "coffee_items", "op": ">=", "threshold": 3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "coffee_orders", "min": 1}], "tpl": "{order_count} 单里有 {coffee_orders} 单带咖啡，咖啡系数 {coffee_rate_pct}%"},
+        {"require": [{"k": "coffee_items", "min": 2}], "tpl": "咖啡类累计 {coffee_items} 杯，冰咖是你的默认选项"},
+        {"require": [{"k": "breakfast_orders", "min": 1}], "tpl": "其中 {breakfast_orders} 单在早上，清醒这件事你交给了麦当劳"},
+        {"require": [{"k": "top1_name"}], "tpl": "点得最多的是 {top1_name}，续命也要续出习惯"}
+      ],
+      "sub_desc": "咖啡系数 {coffee_rate_pct}%",
+      "counter": "M10"
+    },
+    {
+      "code": "M07", "name": "薯条原教旨主义者", "emoji": "🍟", "rarity": "SR", "family": "taste",
+      "animal": "海鸥",
+      "tagline": "这餐没薯条，在他这里不成立。",
+      "quote": "没有薯条的一餐，不配叫一餐",
+      "color1": "#FF2E4D", "color2": "#FFCE1B",
+      "conditions": [
+        {"feature": "potato_rate", "op": ">=", "threshold": 0.5, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "potato_items", "op": ">=", "threshold": 3, "weight": 0.6, "dir": "up", "group": "b"}
+      ],
+      "reasons": [
+        {"require": [{"k": "potato_orders", "min": 1}], "tpl": "{order_count} 单里有 {potato_orders} 单带薯类，命中率 {potato_rate_pct}%"},
+        {"require": [{"k": "potato_items", "min": 2}], "tpl": "薯条薯饼合计 {potato_items} 份，你不是点了薯条，是需要薯条"},
+        {"require": [{"k": "top1_name"}], "tpl": "出现最多的单品是 {top1_name}，配什么都要配它"},
+        {"require": [{"k": "potato_rate_pct", "min": 1}], "tpl": "薯类系数 {potato_rate_pct}%，你的餐盘里不能没有那个红盒子"}
+      ],
+      "sub_desc": "薯类系数 {potato_rate_pct}%",
+      "counter": "M09"
+    },
+    {
+      "code": "M08", "name": "快乐水信徒", "emoji": "🥤", "rarity": "R", "family": "taste",
+      "animal": "河豚",
+      "tagline": "没有可乐的一餐，是没有灵魂的一餐。",
+      "quote": "第一口可乐下去，这一天才算真正开始",
+      "color1": "#E01F3D", "color2": "#2F80ED",
+      "conditions": [
+        {"feature": "soda_rate", "op": ">=", "threshold": 0.5, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "soda_items", "op": ">=", "threshold": 3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "soda_orders", "min": 1}], "tpl": "{order_count} 单里有 {soda_orders} 单带碳酸饮料，命中率 {soda_rate_pct}%"},
+        {"require": [{"k": "soda_items", "min": 2}], "tpl": "可乐雪碧合计 {soda_items} 杯，气泡是你的情绪稳定剂"},
+        {"require": [{"k": "top1_name"}], "tpl": "点得最多的是 {top1_name}，管它什么堡，配的一定是那杯"},
+        {"require": [{"k": "soda_rate_pct", "min": 1}], "tpl": "碳酸系数 {soda_rate_pct}%，没有气的一餐在你这里不成立"}
+      ],
+      "sub_desc": "碳酸系数 {soda_rate_pct}%",
+      "counter": "M09"
+    },
+    {
+      "code": "M09", "name": "无糖自律党", "emoji": "🥗", "rarity": "SSR", "family": "taste",
+      "animal": "青蛙",
+      "tagline": "无糖可乐，是他最后的倔强。",
+      "quote": "无糖，是我最后的倔强",
+      "color1": "#57D900", "color2": "#00C2CB",
+      "conditions": [
+        {"feature": "healthy_rate", "op": ">=", "threshold": 0.4, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "dessert_rate", "op": "<=", "threshold": 0.15, "weight": 1.0, "dir": "down", "group": "b"}
+      ],
+      "reasons": [
+        {"require": [{"k": "healthy_orders", "min": 1}], "tpl": "{order_count} 单里有 {healthy_orders} 单点的是无糖 / 豆浆 / 果汁这类，养生系数 {healthy_rate_pct}%"},
+        {"require": [{"k": "dessert_items"}, {"k": "healthy_items", "min": 1}], "tpl": "甜品只碰到 {dessert_items} 件，养生类却有 {healthy_items} 件，你的克制是真的"},
+        {"require": [{"k": "top3_desc"}], "tpl": "常点的是 {top3_desc}，热量表看得比菜单还熟"},
+        {"require": [{"k": "healthy_rate_pct", "min": 1}], "tpl": "养生系数 {healthy_rate_pct}%，在麦当劳里自律，是最硬核的自律"}
+      ],
+      "sub_desc": "养生系数 {healthy_rate_pct}%",
+      "counter": "M10"
+    },
+    {
+      "code": "M10", "name": "甜品第二个胃", "emoji": "🍦", "rarity": "R", "family": "taste",
+      "animal": "小熊猫",
+      "tagline": "正餐是任务，麦旋风才是目的。",
+      "quote": "正餐是任务，甜品才是目的",
+      "color1": "#FF7EB3", "color2": "#B8F2D8",
+      "conditions": [
+        {"feature": "dessert_rate", "op": ">=", "threshold": 0.3, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "dessert_items", "op": ">=", "threshold": 3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "dessert_orders", "min": 1}], "tpl": "{order_count} 单里有 {dessert_orders} 单带甜品，命中率 {dessert_rate_pct}%"},
+        {"require": [{"k": "dessert_items", "min": 2}], "tpl": "麦旋风 / 派 / 圆筒合计 {dessert_items} 件，第二个胃是真实存在的"},
+        {"require": [{"k": "avg_ticket"}], "tpl": "平均一单 {avg_ticket} 元，其中有一部分明确是买给甜的"},
+        {"require": [{"k": "top1_name"}], "tpl": "点得最多的是 {top1_name}，咸的只是前奏"}
+      ],
+      "sub_desc": "甜品率 {dessert_rate_pct}%",
+      "counter": "M09"
+    },
+    {
+      "code": "M11", "name": "牛堡重量级", "emoji": "🥩", "rarity": "SR", "family": "taste",
+      "animal": "棕熊幼崽",
+      "tagline": "鸡排堡是下午吃的，他只要牛。",
+      "quote": "鸡排堡是下午吃的，我只认牛",
+      "color1": "#8B3A2B", "color2": "#FFC24B",
+      "conditions": [
+        {"feature": "beef_items", "op": ">=", "threshold": 3, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "beef_chicken_ratio", "op": ">=", "threshold": 2, "weight": 1.0, "dir": "up", "group": "b"}
+      ],
+      "reasons": [
+        {"require": [{"k": "beef_items", "min": 2}], "tpl": "牛肉类累计 {beef_items} 件，禽类只有 {chicken_items} 件，牛禽比 {beef_chicken_ratio_display}"},
+        {"require": [{"k": "top1_name"}], "tpl": "点得最多的是 {top1_name}，重量级选手从不轻食"},
+        {"require": [{"k": "items_per_order"}], "tpl": "平均一单 {items_per_order} 件，分量这件事不能妥协"},
+        {"require": [{"k": "avg_list_price"}], "tpl": "平均原价 {avg_list_price} 元，贵的那部分基本都贵在肉上"}
+      ],
+      "sub_desc": "牛肉 {beef_items} 件 · 牛禽比 {beef_chicken_ratio_display}",
+      "counter": "M19"
+    },
+    {
+      "code": "M12", "name": "九块九战术大师", "emoji": "💰", "rarity": "SR", "family": "behave",
+      "animal": "狐狸",
+      "tagline": "原价下单，胃会先疼。",
+      "quote": "原价下单，胃会先疼",
+      "color1": "#7ED321", "color2": "#D0021B",
+      "conditions": [
+        {"feature": "discount_rate", "op": ">=", "threshold": 0.35, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "avg_ticket", "op": "<=", "threshold": 12, "weight": 1.0, "dir": "down", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "discount_rate_pct", "min": 1}], "tpl": "整体折扣率 {discount_rate_pct}%，累计省下 {total_discount} 元"},
+        {"require": [{"k": "avg_ticket"}], "tpl": "平均实付 {avg_ticket} 元，平均原价 {avg_list_price} 元，差价就是你的战绩"},
+        {"require": [{"k": "coupon_use_orders", "min": 1}], "tpl": "{order_count} 单里有 {coupon_use_orders} 单挂了优惠券，用券率 {coupon_use_rate_pct}%"},
+        {"require": [{"k": "coupon_stock", "min": 1}], "tpl": "券包里还躺着 {coupon_stock} 张券，弹药永远充足"}
+      ],
+      "sub_desc": "折扣率 {discount_rate_pct}%",
+      "counter": "M20"
+    },
+    {
+      "code": "M13", "name": "券包仓鼠", "emoji": "🎫", "rarity": "R", "family": "behave",
+      "animal": "仓鼠",
+      "tagline": "领了未必用，但必须有。",
+      "quote": "领了不一定用，但必须有",
+      "color1": "#C08A4E", "color2": "#FFF3C4",
+      "conditions": [
+        {"feature": "coupon_stock", "op": ">=", "threshold": 15, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "coupon_stock", "op": ">=", "threshold": 8, "weight": 0.5, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "coupon_stock", "min": 1}], "tpl": "券包里躺着 {coupon_stock} 张券，其中 {coupon_expiring} 张标着今日到期"},
+        {"require": [{"k": "coupon_expiring", "min": 1}], "tpl": "有 {coupon_expiring} 张券正在倒计时，你一定知道，但不一定用"},
+        {"require": [{"k": "coupon_use_orders", "min": 1}], "tpl": "{order_count} 单里 {coupon_use_orders} 单真的用掉了券，用券率 {coupon_use_rate_pct}%"},
+        {"require": [{"k": "discount_rate_pct", "min": 1}], "tpl": "折扣率 {discount_rate_pct}%，囤券这件事你从没亏过"}
+      ],
+      "sub_desc": "券包 {coupon_stock} 张",
+      "counter": "M19"
+    },
+    {
+      "code": "M14", "name": "麦乐送钉子户", "emoji": "🛵", "rarity": "SR", "family": "behave",
+      "animal": "橘猫",
+      "tagline": "不出门也能吃麦，这是原则。",
+      "quote": "能不出门就别出门，这是原则",
+      "color1": "#FFC72C", "color2": "#7B5EA7",
+      "conditions": [
+        {"feature": "delivery_rate", "op": ">=", "threshold": 0.5, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "delivery_orders", "min": 1}], "tpl": "{order_count} 单里有 {delivery_orders} 单走麦乐送，占比 {delivery_rate_pct}%"},
+        {"require": [{"k": "city"}], "tpl": "在{city}，你的麦当劳是送到门口的，不是走到门口的"},
+        {"require": [{"k": "items_per_order"}], "tpl": "平均一单 {items_per_order} 件，反正不用自己拎"},
+        {"require": [{"k": "delivery_rate_pct", "min": 1}], "tpl": "外送占比 {delivery_rate_pct}%，沙发是你的主战场"}
+      ],
+      "sub_desc": "麦乐送占比 {delivery_rate_pct}%",
+      "counter": "M15"
+    },
+    {
+      "code": "M15", "name": "得来速车窗党", "emoji": "🚗", "rarity": "SSR", "family": "behave",
+      "animal": "柯基",
+      "tagline": "车没熄火，堡已经到手。",
+      "quote": "车没熄火，堡已经到手",
+      "color1": "#E63946", "color2": "#6C8EBF",
+      "conditions": [
+        {"feature": "drive_rate", "op": ">=", "threshold": 0.3, "weight": 1.0, "dir": "up", "group": "a"}
+      ],
+      "reasons": [
+        {"require": [{"k": "drive_orders", "min": 1}], "tpl": "{order_count} 单里有 {drive_orders} 单走得来速，占比 {drive_rate_pct}%"},
+        {"require": [{"k": "most_common_hour"}], "tpl": "最常出现的时段是 {most_common_hour}，开车顺手那一单"},
+        {"require": [{"k": "items_per_order"}], "tpl": "平均一单 {items_per_order} 件，一手方向盘一手汉堡"},
+        {"require": [{"k": "drive_rate_pct", "min": 1}], "tpl": "得来速占比 {drive_rate_pct}%，你甚至懒得熄火"}
+      ],
+      "sub_desc": "得来速占比 {drive_rate_pct}%",
+      "counter": "M14"
+    },
+    {
+      "code": "M16", "name": "门店钉子户", "emoji": "📍", "rarity": "SR", "family": "behave",
+      "animal": "小象",
+      "tagline": "一生只认一个店，粉红姐姐记得他的脸。",
+      "quote": "一生只认这一家，连门口的坑都踩熟了",
+      "color1": "#FFC72C", "color2": "#C1442E",
+      "conditions": [
+        {"feature": "main_store_rate", "op": ">=", "threshold": 0.8, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "store_count", "op": "<=", "threshold": 2, "weight": 0, "dir": "down", "gate": true},
+        {"feature": "order_count", "op": ">=", "threshold": 4, "weight": 0, "dir": "up", "gate": true}
+      ],
+      "reasons": [
+        {"require": [{"k": "main_store_orders", "min": 1}, {"k": "city"}], "tpl": "{order_count} 单里有 {main_store_orders} 单来自{city}的同一家门店，集中度 {main_store_rate_pct}%", "require_any": false},
+        {"require": [{"k": "store_count"}], "tpl": "总共只去过 {store_count} 家门店，认准一家就不换"},
+        {"require": [{"k": "span_days", "min": 1}], "tpl": "{span_days} 天里反复回到同一个柜台，粉红姐姐大概率记得你的脸"},
+        {"require": [{"k": "top1_name"}], "tpl": "连点的都是同一套：{top1_name}"}
+      ],
+      "sub_desc": "{main_store_orders} 单来自同一家门店",
+      "counter": "M05"
+    },
+    {
+      "code": "M17", "name": "限定收割机", "emoji": "✨", "rarity": "SSR", "family": "asset",
+      "animal": "喜鹊",
+      "tagline": "新品上架当天没到，算迟到。",
+      "quote": "新品上架当天没到，算迟到",
+      "color1": "#9B51E0", "color2": "#F2FF3D",
+      "conditions": [
+        {"feature": "novelty_rate", "op": ">=", "threshold": 0.6, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "order_count", "op": ">=", "threshold": 5, "weight": 0, "dir": "up", "gate": true},
+        {"feature": "limited_items", "op": ">=", "threshold": 2, "weight": 0, "dir": "up", "gate": true}
+      ],
+      "reasons": [
+        {"require": [{"k": "novelty_rate_pct", "min": 1}], "tpl": "尝鲜率 {novelty_rate_pct}%，几乎每单都在点没点过的东西"},
+        {"require": [{"k": "limited_items", "min": 1}], "tpl": "限定 / 季节 / 联名款命中 {limited_items} 件：{limited_names}"},
+        {"require": [{"k": "top1_ratio_pct", "min": 1}], "tpl": "最爱的单品也只占 {top1_ratio_pct}%，你不留恋任何一款"},
+        {"require": [{"k": "span_days", "min": 1}], "tpl": "{span_days} 天里下了 {order_count} 单，上新节奏跟得比谁都紧"}
+      ],
+      "sub_desc": "尝鲜率 {novelty_rate_pct}%",
+      "counter": "M20"
+    },
+    {
+      "code": "M18", "name": "积分守财奴", "emoji": "🏦", "rarity": "R", "family": "asset",
+      "animal": "小猪",
+      "tagline": "积分是我的养老金，谁也别想动。",
+      "quote": "积分是我的养老金，谁也别想动",
+      "color1": "#FFB800", "color2": "#1A3D8F",
+      "conditions": [
+        {"feature": "point_save_rate", "op": ">=", "threshold": 0.4, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "point_use_rate", "op": "<=", "threshold": 0.15, "weight": 1.0, "dir": "down", "group": "b"}
+      ],
+      "reasons": [
+        {"require": [{"k": "points_available"}], "tpl": "累计 {points_total} 分，可用 {points_available} 分，储蓄率 {point_save_rate_pct}%"},
+        {"require": [{"k": "points_used"}], "tpl": "这么久只花掉 {points_used} 分，使用率 {point_use_rate_pct}%，你是在攒首付吗"},
+        {"require": [{"k": "draw_times", "min": 1}], "tpl": "当前积分还能再抽 {draw_times} 次，你一动没动"},
+        {"require": [{"k": "points_expire_month", "min": 1}], "tpl": "本月还有 {points_expire_month} 分要过期，你依然稳如泰山"}
+      ],
+      "sub_desc": "积分储蓄率 {point_save_rate_pct}%",
+      "counter": "M12"
+    },
+    {
+      "code": "M19", "name": "单点孤狼", "emoji": "🧍", "rarity": "R", "family": "asset",
+      "animal": "小狼",
+      "tagline": "一个人，一个堡，一杯可乐，够了。",
+      "quote": "一个人，一个堡，一杯可乐，够了",
+      "color1": "#B8C0CC", "color2": "#FF8A00",
+      "conditions": [
+        {"feature": "items_per_order", "op": "<=", "threshold": 2.2, "weight": 1.0, "dir": "down", "group": "a"},
+        {"feature": "single_share", "op": ">=", "threshold": 0.4, "weight": 1.0, "dir": "up", "group": "b"}
+      ],
+      "reasons": [
+        {"require": [{"k": "items_per_order"}], "tpl": "平均一单只有 {items_per_order} 件，从不点套餐以外的东西"},
+        {"require": [{"k": "single_rate_pct", "min": 1}], "tpl": "单点 / 单人餐占比 {single_rate_pct}%，你的餐桌永远只有一副碗筷"},
+        {"require": [{"k": "avg_ticket"}], "tpl": "平均实付 {avg_ticket} 元，简单、直接、不多余"},
+        {"require": [{"k": "top1_name"}], "tpl": "最常出现的是 {top1_name}，认定了就不换"}
+      ],
+      "sub_desc": "平均一单 {items_per_order} 件",
+      "counter": "M11"
+    },
+    {
+      "code": "M20", "name": "老三样复刻党", "emoji": "🔁", "rarity": "R", "family": "asset",
+      "animal": "绵羊",
+      "tagline": "换堡？为什么要换堡。",
+      "quote": "换堡？为什么要换堡",
+      "color1": "#4DA8DA", "color2": "#FF9500",
+      "conditions": [
+        {"feature": "top1_ratio", "op": ">=", "threshold": 0.4, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "novelty_rate", "op": "<", "threshold": 0.4, "weight": 1.0, "dir": "down", "group": "b"}
+      ],
+      "reasons": [
+        {"require": [{"k": "top1_name"}, {"k": "top1_count", "min": 2}], "tpl": "{top1_name}点了 {top1_count} 次，占总件数的 {top1_ratio_pct}%"},
+        {"require": [{"k": "top3_desc"}], "tpl": "翻来覆去就是 {top3_desc}，菜单对你来说是装饰"},
+        {"require": [{"k": "novelty_rate_pct"}, {"k": "top1_ratio_pct", "min": 1}], "tpl": "尝鲜率只有 {novelty_rate_pct}%，重复度却高达 {top1_ratio_pct}%"},
+        {"require": [{"k": "order_count"}], "tpl": "{order_count} 单下来，你点过的东西用一只手数得完"}
+      ],
+      "sub_desc": "Top1 集中度 {top1_ratio_pct}%",
+      "counter": "M17"
+    },
+    {
+      "code": "M00", "name": "见习麦友", "emoji": "🍼", "rarity": "N", "family": "fallback",
+      "animal": "小鸭崽",
+      "tagline": "履历太薄，先攒够三单再来看报告。",
+      "quote": "刚出炉的麦友，欢迎光临",
+      "color1": "#FFE066", "color2": "#A6D8FF",
+      "conditions": [],
+      "reasons": [
+        {"require": [{"k": "order_count"}], "tpl": "目前只有 {order_count} 单有效订单，样本还不够，我们还看不透你"},
+        {"require": [{"k": "first_date"}, {"k": "last_date"}], "tpl": "第一单落在 {first_date}，最近一单是 {last_date}"},
+        {"require": [{"k": "city"}], "tpl": "在{city}，你已经去过 {main_store_orders} 次，起步稳当"},
+        {"require": [{"k": "top1_name"}], "tpl": "目前点得最多的是 {top1_name}，风格还没定型"},
+        {"require": [], "tpl": "再来一单，我们就能看出你是哪种动物了"}
+      ],
+      "sub_desc": "样本不足",
+      "counter": "M16"
+    },
+    {
+      "code": "MX", "name": "过期冤种", "emoji": "⏳", "rarity": "SSR", "family": "hidden",
+      "animal": "水獭",
+      "tagline": "你的积分，在你不知道的深夜，悄悄走了。",
+      "quote": "你的积分，在你看不见的深夜走了",
+      "color1": "#8878A8", "color2": "#D97A29",
+      "conditions": [
+        {"feature": "point_expire_rate", "op": ">=", "threshold": 0.5, "weight": 1.0, "dir": "up", "group": "a"},
+        {"feature": "expired_point", "op": ">=", "threshold": 1000, "weight": 1.0, "dir": "up", "group": "b"}
+      ],
+      "reasons": [],
+      "sub_desc": "过期率 {point_expire_rate_pct}%",
+      "counter": "M18"
+    }
+  ],
+  "generic_reasons": [
+    {"require": [{"k": "order_count"}], "tpl": "共 {order_count} 单有效订单，跨度 {span_days} 天"},
+    {"require": [{"k": "city"}], "tpl": "{city}是你最常出现的地方"},
+    {"require": [{"k": "max_order_name"}], "tpl": "最贵的一单是 {max_order_amount} 元的{max_order_name}"},
+    {"require": [{"k": "points_available"}], "tpl": "累计积分 {points_total}，已用 {points_used}，可用 {points_available}"},
+    {"require": [{"k": "coupon_stock", "min": 1}], "tpl": "券包里躺着 {coupon_stock} 张券"},
+    {"require": [{"k": "items_per_order"}], "tpl": "平均一单 {items_per_order} 件"},
+    {"require": [{"k": "top1_name"}], "tpl": "点得最多的是 {top1_name}，共 {top1_count} 次"}
+  ]
+}

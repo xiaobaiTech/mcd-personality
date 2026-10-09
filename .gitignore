@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+venv/
+
+# 运行产物：含个人订单数据，禁止入库
+raw/
+raw.json
+out/
+runs/
+result.json
+features.json
+/report.html
+/report.png

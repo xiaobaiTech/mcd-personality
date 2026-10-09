@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的麦当劳人格 · {{PERSONA_NAME}}</title>
+<style>
+/* 站酷快乐体（可爱手写感），base64 内嵌，断网 / 分享到任何地方都不掉字 */
+@font-face{
+  font-family:'ZCOOL KuaiLe Embed';
+  src:url({{FONT_FACE}}) format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+:root{
+  --p1: {{COLOR_1}};
+  --p2: {{COLOR_2}};
+  --ink: #241C15;
+  --paper: #FFF8E7;
+  --cream: #FFFDF6;
+  --line: #241C15;
+  --muted: #8A7A66;
+  --font-hand: 'ZCOOL KuaiLe Embed', 'ZCOOL KuaiLe', 'Hanzipen SC', 'Yuanti SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-body: 'ZCOOL KuaiLe Embed', 'ZCOOL KuaiLe', 'Hanzipen SC', 'Yuanti SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#F3EDE0;}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  display:flex;justify-content:center;
+  padding:20px 10px 26px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===== 卡片主容器 ===== */
+.card{
+  width:480px;max-width:100%;
+  background:var(--paper);
+  border:5px solid var(--line);
+  border-radius:30px;
+  box-shadow:9px 9px 0 var(--line);
+  overflow:hidden;
+  position:relative;
+}
+
+/* ===== 顶部：编号 + 稀有度 ===== */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;
+  background:var(--p1);
+  border-bottom:5px solid var(--line);
+}
+.code{
+  font-size:15px;font-weight:700;letter-spacing:2px;
+  background:var(--cream);
+  border:3px solid var(--line);border-radius:999px;
+  padding:4px 14px;
+}
+.rarity{
+  font-size:14px;font-weight:700;letter-spacing:1px;color:#fff;
+  background:{{RARITY_BG}};
+  border:3px solid var(--line);border-radius:999px;
+  padding:5px 16px;
+  text-shadow:0 2px 0 rgba(0,0,0,.18);
+  box-shadow:3px 3px 0 rgba(0,0,0,.16);
+}
+
+/* ===== 人格卡图 ===== */
+.hero{
+  padding:12px 16px 10px;
+}
+.hero-frame{
+  position:relative;
+  width:70%;
+  margin:0 auto;
+  border:4px solid var(--line);
+  border-radius:20px;
+  overflow:hidden;
+  background:var(--p2);
+  box-shadow:5px 5px 0 rgba(36,28,21,.22);
+}
+.hero-frame img{display:block;width:100%;height:auto}
+.hero-tag{
+  position:absolute;left:9px;bottom:9px;
+  background:var(--cream);
+  border:3px solid var(--line);border-radius:999px;
+  padding:3px 10px;font-size:12px;font-weight:700;
+}
+
+/* ===== 人格名 ===== */
+.nameblock{padding:9px 16px 3px;text-align:center}
+.persona-name{
+  display:inline-block;
+  font-size:38px;line-height:1.22;font-weight:700;
+  letter-spacing:1px;
+  padding:0 8px;
+  /* 荧光笔划重点效果 */
+  background:linear-gradient(transparent 60%, var(--p2) 60%, var(--p2) 94%, transparent 94%);
+}
+.persona-emoji{font-size:28px;vertical-align:2px;margin-left:4px}
+.tagline{
+  margin-top:5px;font-size:15px;color:var(--muted);line-height:1.45;
+}
+.axes{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.axis{
+  font-size:13px;font-weight:700;
+  background:var(--cream);
+  border:3px solid var(--line);border-radius:999px;
+  padding:3px 11px;
+}
+
+/* ===== 区块通用 ===== */
+.section{padding:9px 16px}
+.sec-title{
+  display:inline-block;
+  font-size:16px;font-weight:700;
+  background:var(--p2);
+  border:3px solid var(--line);border-radius:999px;
+  padding:3px 14px;
+  margin-bottom:9px;
+  box-shadow:3px 3px 0 rgba(36,28,21,.18);
+}
+
+/* ===== 判定依据 ===== */
+.reasons{list-style:none;display:flex;flex-direction:column;gap:7px}
+.reasons li{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--cream);
+  border:3px solid var(--line);border-radius:16px;
+  padding:8px 11px;
+  font-size:15px;line-height:1.45;
+}
+.reasons .no{
+  flex:0 0 auto;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--p1);border:3px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+}
+
+/* ===== 数据面板 ===== */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cell{
+  background:var(--cream);
+  border:3px solid var(--line);border-radius:16px;
+  padding:7px 10px;
+}
+.cell .k{font-size:11px;color:var(--muted);display:block;margin-bottom:2px}
+.cell .v{font-size:18px;font-weight:700;line-height:1.22;word-break:break-all}
+.cell .v small{font-size:13px;font-weight:400;color:var(--muted)}
+.cell.wide{grid-column:span 2}
+
+/* ===== 金句 ===== */
+.quote{
+  background:var(--p1);
+  border:5px solid var(--line);border-radius:20px;
+  padding:11px 15px;text-align:center;
+  font-size:18px;font-weight:700;line-height:1.45;
+  box-shadow:5px 5px 0 rgba(36,28,21,.22);
+  margin:0 18px;
+}
+
+/* ===== 副格 ===== */
+.subs{display:flex;flex-direction:column;gap:7px}
+.sub{
+  display:flex;align-items:center;gap:10px;
+  background:var(--cream);
+  border:3px dashed var(--line);border-radius:16px;
+  padding:8px 12px;font-size:14px;
+}
+.sub .badge{
+  flex:0 0 auto;font-size:11px;font-weight:700;
+  background:var(--p2);border:2px solid var(--line);border-radius:999px;padding:2px 9px;
+}
+
+/* ===== 隐藏彩蛋 ===== */
+.egg{
+  margin:0 18px 2px;
+  background:#FFF1D0;
+  border:4px dashed var(--line);border-radius:20px;
+  overflow:hidden;
+}
+.egg summary{
+  cursor:pointer;list-style:none;
+  padding:9px 14px;font-size:14px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+.egg summary::-webkit-details-marker{display:none}
+.egg summary::after{content:'戳一下';margin-left:auto;font-size:13px;color:var(--muted)}
+.egg[open] summary::after{content:'收起'}
+.egg-body{display:flex;gap:10px;align-items:center;padding:0 14px 12px}
+.egg-body img{
+  width:74px;height:74px;flex:0 0 auto;object-fit:cover;
+  border:3px solid var(--line);border-radius:16px;background:#fff;
+}
+.egg-text .n{font-size:16px;font-weight:700}
+.egg-text .d{font-size:13px;color:var(--muted);line-height:1.5;margin-top:3px}
+
+/* ===== 分享钩子 ===== */
+.share{
+  margin-top:10px;
+  background:var(--p2);
+  border-top:5px solid var(--line);
+  padding:12px 16px;text-align:center;
+}
+.share .big{font-size:18px;font-weight:700;line-height:1.45}
+.share .small{margin-top:6px;font-size:12px;color:#6B5B48;line-height:1.6}
+.share .stamp{
+  display:inline-block;margin-top:7px;
+  background:var(--cream);border:3px solid var(--line);border-radius:999px;
+  padding:4px 15px;font-size:12px;font-weight:700;
+}
+
+/* ===== 底部 ===== */
+.foot{
+  padding:8px 16px 11px;text-align:center;
+  font-size:12px;color:var(--muted);line-height:1.6;
+}
+
+@media (max-width:520px){
+  body{padding:14px 8px 32px}
+  .card{border-radius:26px;box-shadow:7px 7px 0 var(--line)}
+  .persona-name{font-size:31px}
+  .quote{font-size:17px}
+}
+@media print{
+  body{background:#fff;padding:0}
+  .card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="topbar">
+    <span class="code">NO.{{PERSONA_CODE}}</span>
+    <span class="rarity {{RARITY_CLASS}}">{{RARITY_LABEL}}</span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-frame">
+      <img src="{{PERSONA_IMAGE}}" alt="{{PERSONA_NAME}}">
+      <span class="hero-tag">{{HERO_TAG}}</span>
+    </div>
+  </div>
+
+  <div class="nameblock">
+    <div class="persona-name">{{PERSONA_NAME}}<span class="persona-emoji">{{PERSONA_EMOJI}}</span></div>
+    <div class="tagline">{{TAGLINE}}</div>
+    <div class="axes">{{AXIS_CHIPS}}</div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">为什么是你</div>
+    <ul class="reasons">
+      <li><span class="no">1</span><span>{{REASON_1}}</span></li>
+      <li><span class="no">2</span><span>{{REASON_2}}</span></li>
+      <li><span class="no">3</span><span>{{REASON_3}}</span></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">你的麦当劳数据</div>
+    <div class="grid">{{DATA_GRID}}</div>
+  </div>
+
+  <div class="quote">「{{QUOTE}}」</div>
+
+  {{SUB_BLOCK}}
+
+  {{EASTER_EGG}}
+
+  <div class="share">
+    <div class="big">{{SHARE_BIG}}</div>
+    <div class="small">{{SHARE_SMALL}}</div>
+    <div class="stamp">{{SHARE_STAMP}}</div>
+  </div>
+
+  <div class="foot">{{FOOTER}}</div>
+
+</div>
+</body>
+</html>
